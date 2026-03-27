@@ -6,6 +6,14 @@ const store = new Map(); // key -> { count, resetAt }
 
 export function rateLimit(key, limit, windowMs) {
   const now = Date.now();
+
+  // Inline cleanup: evict a batch of stale entries on each call
+  if (store.size > 1000) {
+    for (const [k, entry] of store) {
+      if (now > entry.resetAt) store.delete(k);
+    }
+  }
+
   const entry = store.get(key);
 
   if (!entry || now > entry.resetAt) {
@@ -20,11 +28,3 @@ export function rateLimit(key, limit, windowMs) {
   entry.count++;
   return { allowed: true, remaining: limit - entry.count };
 }
-
-// Cleanup stale entries periodically to avoid unbounded memory growth
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store) {
-    if (now > entry.resetAt) store.delete(key);
-  }
-}, 60_000);
