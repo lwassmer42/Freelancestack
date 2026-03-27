@@ -1,11 +1,11 @@
-name = "clientdrop"
+name = "freelancestack"
 main = "src/index.js"
 compatibility_date = "2026-03-25"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "clientdrop-db"
-database_id = "PLACEHOLDER"
+database_id = "d2988336-5493-4acd-a974-44f7eb14c524"
 
 [[r2_buckets]]
 binding = "BUCKET"
