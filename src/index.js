@@ -10,6 +10,13 @@ import {
 import { handleUploadFiles, handleDeleteFile } from './routes/files.js';
 import { handleShareGet, handleShareDownload, handleShareComment } from './routes/share.js';
 import { handleCreateUpdate, handleDeleteUpdate } from './routes/updates.js';
+import {
+  renderDashboardPage,
+  renderPortalPage,
+  serveDashboardScript,
+  servePortalScript,
+  serveStyles,
+} from './frontend/pages.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -21,6 +28,15 @@ export default {
     if (method === 'OPTIONS') return corsOptions();
 
     try {
+      // ── Frontend ──────────────────────────────────────────────────────────
+      if (pathname === '/' && method === 'GET') return renderDashboardPage();
+      if (pathname === '/app.css' && method === 'GET') return serveStyles();
+      if (pathname === '/app.js' && method === 'GET') return serveDashboardScript();
+      if (pathname === '/portal.js' && method === 'GET') return servePortalScript();
+
+      const portalMatch = pathname.match(/^\/p\/([^/]+)$/);
+      if (portalMatch && method === 'GET') return renderPortalPage(portalMatch[1]);
+
       // ── Auth ──────────────────────────────────────────────────────────────
       if (pathname === '/api/auth/register' && method === 'POST')
         return handleRegister(request, env);
@@ -83,3 +99,4 @@ export default {
     }
   },
 };
+
